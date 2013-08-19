@@ -1,0 +1,20 @@
+struct output{
+	float4 color : COLOR;
+};
+
+output main(float2 position : POSITION, float2 texCoord : TEXCOORD, uniform float sze, uniform sampler2D lastTex, uniform sampler2D audioTex, uniform float var1, uniform float var2)
+{
+	output OUT;
+	if(tex2D(audioTex, texCoord).b > 0.5){
+		OUT.color = float4(1, 1, 1, 1);
+	}
+	else{
+		if(texCoord.y > 0.5)
+			OUT.color = 0.5*tex2D(lastTex, float2(texCoord.x, texCoord.y - 1.0 / sze)) - 0.002;
+		else OUT.color = 0.5*tex2D(lastTex, float2(texCoord.x, texCoord.y + 1.0 / sze)) - 0.002;
+		if(texCoord.x > 0.5)
+			OUT.color += 0.5*tex2D(lastTex, float2(texCoord.x - 1.0 / sze, texCoord.y));
+		else OUT.color += 0.5*tex2D(lastTex, float2(texCoord.x + 1.0 / sze, texCoord.y));
+	}
+	return OUT;
+}

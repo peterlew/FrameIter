@@ -1,0 +1,10 @@
+struct output{
+	float4 color : COLOR;
+};
+
+output main(float2 position : POSITION, float2 texCoord : TEXCOORD)
+{
+	output OUT;
+	OUT.color = float4(1, 1, 1, 1);
+	return OUT;
+}

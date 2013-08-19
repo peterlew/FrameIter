@@ -1,0 +1,19 @@
+struct output{
+	float4 color : COLOR;
+};
+
+output main(float2 position : POSITION, float2 texCoord : TEXCOORD, uniform float sze, uniform sampler2D lastTex, uniform float var1, uniform float zoom, uniform float2 center)
+{
+	output OUT;
+	float2 tc = zoom * texCoord + center;
+	if(texCoord.x*texCoord.y > 0.5)
+		OUT.color = float4(texCoord.x, texCoord.y, 1, 1);
+	else if(texCoord.x < 0.5 && texCoord.y < 0.5)
+		OUT.color = tex2D(lastTex, float2(2*texCoord.x, 2*texCoord.y));
+	else if(texCoord.x < 0.5 && texCoord.y >= 0.5)
+		OUT.color = tex2D(lastTex, float2(2*texCoord.x, 2*(texCoord.y - 0.5)));
+	else OUT.color = tex2D(lastTex, float2(2*(texCoord.x - 0.5), 2*(texCoord.y - 0.5)));
+	if(dot(OUT.color, OUT.color) <= 1.5)
+		OUT.color = tex2D(lastTex, tc) - 0.1;
+	return OUT;
+}

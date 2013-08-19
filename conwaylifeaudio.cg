@@ -1,0 +1,33 @@
+struct output{
+	float4 color : COLOR;
+};
+
+output main(float2 position : POSITION, float2 texCoord : TEXCOORD, uniform float sze, uniform sampler2D lastTex, uniform sampler2D audioTex, uniform float var1, uniform float var2)
+{
+	output OUT;
+	if(tex2D(audioTex, texCoord).b > 0.5){
+		float col = 10 * (0.1 - abs(texCoord.y - 0.5));
+		col = col < 0 ? 0 : col;
+		OUT.color = float4( col + (1 - col)*texCoord.x, col + (1 - col)*texCoord.y, 1, 1);
+	}
+	else{
+		float d = 1.0 / sze;
+		float4 lastCol = tex2D(lastTex, texCoord);
+		int upCount =   floor(tex2D(lastTex, float2(texCoord.x - d, texCoord.y - d)).b) +
+					 floor( tex2D(lastTex, float2(texCoord.x, texCoord.y - d)).a) +
+					  floor(tex2D(lastTex, float2(texCoord.x + d, texCoord.y - d)).a) +
+					  floor(tex2D(lastTex, float2(texCoord.x - d, texCoord.y)).a) +
+					  floor(tex2D(lastTex, float2(texCoord.x + d, texCoord.y)).a) +
+					  floor(tex2D(lastTex, float2(texCoord.x - d, texCoord.y + d)).a) +
+					  floor(tex2D(lastTex, float2(texCoord.x, texCoord.y + d)).a) +
+					  floor(tex2D(lastTex, float2(texCoord.x + d, texCoord.y + d)).a);
+		if((upCount == 2 && lastCol.b == 1.0) || upCount == 3){
+			OUT.color = float4(texCoord.x, texCoord.y, 1, 1);
+		}
+		else{
+			OUT.color = lastCol - 0.002;
+		}
+	}
+	return OUT;
+}
+

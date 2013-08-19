@@ -1,0 +1,10 @@
+struct output{
+	float4 color : COLOR;
+};
+
+output main(float2 position : POSITION, float2 texCoord : TEXCOORD, uniform sampler2D lastTex)
+{
+	output OUT;
+	OUT.color = tex2D(lastTex, texCoord);
+	return OUT;
+}

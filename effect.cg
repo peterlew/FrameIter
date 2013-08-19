@@ -1,0 +1,31 @@
+struct output{
+	float4 color : COLOR;
+};
+
+output main(float2 position : POSITION, float2 texCoord : TEXCOORD, uniform float sze, uniform sampler2D lastTex, uniform float var1)
+{
+	output OUT;
+	float4 lastCol = tex2D(lastTex, texCoord);
+	if(dot(lastCol, lastCol) > 1){
+		OUT.color = lastCol - 0.002;
+		return OUT;
+	}
+	float d = 1.0 / sze;
+	int upCount = tex2D(lastTex, float2(texCoord.x - d, texCoord.y - d)).b +
+				  tex2D(lastTex, float2(texCoord.x, texCoord.y - d)).b +
+				  tex2D(lastTex, float2(texCoord.x + d, texCoord.y - d)).b +
+				  tex2D(lastTex, float2(texCoord.x - d, texCoord.y)).b +
+				  tex2D(lastTex, float2(texCoord.x + d, texCoord.y)).b + 
+				  tex2D(lastTex, float2(texCoord.x - d, texCoord.y + d)).b +
+				  tex2D(lastTex, float2(texCoord.x, texCoord.y + d)).b + 
+				  tex2D(lastTex, float2(texCoord.x + d, texCoord.y + d)).b;
+	if(upCount == 1 || (upCount > 5 && upCount < 7)){
+		float col = (float)upCount/8.0;
+		OUT.color = float4(col, 2*col, 1, 1);
+	}
+	else{
+		OUT.color = float4(0, 0, 0, 1);
+	}
+	return OUT;
+}
+

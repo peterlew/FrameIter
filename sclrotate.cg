@@ -1,0 +1,24 @@
+struct output{
+	float4 color : COLOR;
+};
+
+output main(float2 position : POSITION, float2 texCoord : TEXCOORD, uniform float sze, uniform sampler2D lastTex, uniform float var1, uniform float var2, uniform float zoom, uniform float2 center)
+{
+	output OUT;
+	float2 p = var2 * zoom * float2(2*texCoord.x - 1, 1 - 2*texCoord.y) - center;
+	float xTmp = p.x;
+	p.x = cos(var1) * p.x - sin(var1) * p.y;
+	p.y = sin(var1) * xTmp + cos(var1) * p.y;
+	if(abs(p.x*p.x*p.x*p.x + 2*p.x*p.x*p.y*p.y + p.y*p.y*p.y*p.y - p.x*p.x*p.x + 3*p.x*p.y*p.y) < 0.002)
+		OUT.color = float4(length(p), 0.2, 3*length(p), 1);
+//	else OUT.color = tex2D(lastTex, texCoord) - float4(0.02, 0.04, 0.08, 0);
+//	if(length(OUT.color) <= 1.01){
+	else{
+	float mx, my;
+	mx = texCoord.x > 0.5 ? 2*(texCoord.x - 0.5) : 2*texCoord.x;
+	my = texCoord.y > 0.5 ? 2*(texCoord.y - 0.5) : 2*texCoord.y;
+//	OUT.color *= 0.5;
+	OUT.color = tex2D(lastTex, float2(mx, my));
+	}
+	return OUT;
+}
